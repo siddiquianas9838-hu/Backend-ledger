@@ -46,6 +46,32 @@ async function getAccountBalanceController(req, res) {
     })
 }
 
+//--===============--================--===============
+
+import asyncHandler from 'express-async-handler';
+import httpStatus from 'http-status';
+import { accountService } from '../services/account.service.js';
+
+/**
+ * @desc    Get account balance
+ * @route   GET /api/v1/accounts/:accountId/balance
+ * @access  Private
+ */
+export const getAccountBalanceController = asyncHandler(async (req, res) => {
+    const { accountId } = req.params;
+    const userId = req.user._id;
+
+    // 1. Service layer handling business logic
+    const balanceData = await accountService.fetchAccountBalance({ accountId, userId });
+
+    // 2. Clean and consistent response structure
+    return res.status(httpStatus.OK).json({
+        success: true,
+        message: "Account balance retrieved successfully",
+        data: balanceData
+    });
+});
+
 
 module.exports = {
     createAccountController,

@@ -10,6 +10,20 @@ const tokenBlackListModel = require("../models/blackList.model")
 async function userRegisterController(req, res) {
     const { email, password, name } = req.body
 
+//--==============--===============--===============    
+
+    if (!email || !password  || password.length < 6){
+         return res.status(422).json({
+            message: "Email Id is Missing & Password must be at least 6 characters long",
+            status: "failed"
+        })
+    }
+//--===============--==============--==================    
+     email = email.trim().toLowerCase();
+//--==============--================--=================
+
+   
+//--===================--================--=============
     const isExists = await userModel.findOne({
         email: email
     })
@@ -46,28 +60,102 @@ async function userRegisterController(req, res) {
  * - POST /api/auth/login
   */
 
-async function userLoginController(req, res) {
-    const { email, password } = req.body
+// async function userLoginController(req, res) {
+//     const { email, password } = req.body
 
-    const user = await userModel.findOne({ email }).select("+password")
+//     const user = await userModel.findOne({ email }).select("+password")
+
+//     if (!user) {
+//         return res.status(401).json({
+//             message: "Email or password is INVALID"
+//         })
+//     }
+
+//     const isValidPassword = await user.comparePassword(password)
+
+//     if (!isValidPassword) {
+//         return res.status(401).json({
+//             message: "Email or password is INVALID"
+//         })
+//     }
+
+//     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "3d" })
+
+//     res.cookie("token", token)
+
+//     res.status(200).json({
+//         user: {
+//             _id: user._id,
+//             email: user.email,
+//             name: user.name
+//         },
+//         token
+//     })
+
+// }
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+async function userLoginController(req, res) {
+    const { email, password } = req.body;
+
+    const user = await userModel
+        .findOne({ email: email.trim().toLowerCase() })
+        .select("+password");
 
     if (!user) {
         return res.status(401).json({
             message: "Email or password is INVALID"
-        })
+        });
     }
 
-    const isValidPassword = await user.comparePassword(password)
+    //  Check if account is blocked
+    if (
+        user.loginBlockedUntil &&
+        user.loginBlockedUntil > new Date()
+    ) {
+        return res.status(403).json({
+            message: "Account is locked. Try again after 15 minutes."
+        });
+    }
 
+    const isValidPassword = await user.comparePassword(password);
+
+    //  Wrong Password
     if (!isValidPassword) {
+
+        user.failedLoginAttempts++;
+
+        // 5 wrong attempts
+        if (user.failedLoginAttempts >= 5) {
+
+            user.loginBlockedUntil = new Date(
+                Date.now() + 15 * 60 * 1000
+            );
+
+            user.failedLoginAttempts = 0;
+        }
+
+        await user.save();
+
         return res.status(401).json({
             message: "Email or password is INVALID"
-        })
+        });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "3d" })
+    //  Correct Password → Reset counter
+    user.failedLoginAttempts = 0;
+    user.loginBlockedUntil = null;
 
-    res.cookie("token", token)
+    await user.save();
+
+    const token = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "3d" }
+    );
+
+    res.cookie("token", token);
 
     res.status(200).json({
         user: {
@@ -76,8 +164,7 @@ async function userLoginController(req, res) {
             name: user.name
         },
         token
-    })
-
+    });
 }
 
 
@@ -108,11 +195,35 @@ async function userLogoutController(req, res) {
 
 }
 
+//--=================--===============--===============
+//New api
+
+async function userMeController(req, res) {
+
+    const user = await userModel
+        .findById(req.userId)
+        .select("_id name email");
+
+    if (!user) {
+        return res.status(404).json({
+            message: "User not found"
+        });
+    }
+
+    return res.status(200).json({
+        user
+    });
+
+}
+
+//--===============--===============--===============
+
 
 module.exports = {
     userRegisterController,
     userLoginController,
-    userLogoutController
+    userLogoutController,
+    userMeController
 }
 
 

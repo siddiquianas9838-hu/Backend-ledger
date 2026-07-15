@@ -19,8 +19,8 @@ const transactionRoutes = require("./routes/transaction.routes")
 /**
  * - Use Routes
  */
-
-app.get("/", (req, res) => {
+//health checkup all project
+app.get("/anas", (req, res) => {
     res.send("Ledger Service is up and running")
 })
 
