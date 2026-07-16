@@ -30,6 +30,17 @@ router.get("/balance/:accountId", authMiddleware.authMiddleware, accountControll
 
 
 
+
+router.patch( "/:accountId/freeze", authMiddleware, freezeAccountController);
+
+
+router.patch("/:accountId/unfreeze", authMiddleware, unfreezeAccountController);
+
+
+router.patch("/:accountId/close", authMiddleware, closeAccountController);
+
+
+
 module.exports = router
 
 

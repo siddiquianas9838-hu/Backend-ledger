@@ -8,6 +8,13 @@ const accountSchema = new mongoose.Schema({
         required: [ true, "Account must be associated with a user" ],
         index: true
     },
+
+    name: {
+        type: String,
+        trim: true,
+        default: ""
+    },
+
     status: {
         type: String,
         enum: {
@@ -18,7 +25,7 @@ const accountSchema = new mongoose.Schema({
     },
     currency: {
         type: String,
-        required: [ true, "Currency is required for creating an account" ],
+        enum: ["INR", "USD", "EUR", "GBP"],
         default: "INR"
     }
 }, {
