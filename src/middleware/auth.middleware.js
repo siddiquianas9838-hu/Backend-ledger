@@ -163,7 +163,7 @@ async function authSystemUserMiddleware(req, res, next) {
             .findById(decoded.userId)
             .select("+systemUser");
 
-        // ✅ Added check
+        //  Added check
         if (!user) {
             return res.status(401).json({
                 message: "User not found"
