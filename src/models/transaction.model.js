@@ -42,31 +42,10 @@ const transactionModel = mongoose.model("transaction", transactionSchema)
 
 module.exports = transactionModel   
 
+//|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+// const mongoose = require("mongoose")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const mongoose = require("mongoose");
 
 // const transactionSchema = new mongoose.Schema({
 //     fromAccount: {
@@ -76,16 +55,15 @@ module.exports = transactionModel
 //         index: true
 //     },
 //     toAccount: {
-//          type: mongoose.Schema.Types.ObjectId,
+//         type: mongoose.Schema.Types.ObjectId,
 //         ref: "account",
 //         required: [ true, "Transaction must be associated with a to account" ],
 //         index: true
 //     },
-
 //     status: {
 //         type: String,
 //         enum: {
-//             values: [ "PENDING", "COMPLETED", "FAILED" , "REVERSED" ],
+//             values: [ "PENDING", "COMPLETED", "FAILED", "REVERSED" ],
 //             message: "Status can be either PENDING, COMPLETED, FAILED or REVERSED",
 //         },
 //         default: "PENDING"
@@ -97,7 +75,7 @@ module.exports = transactionModel
 //     },
 //     idempotencyKey: {
 //         type: String,
-//         required: [ true, "Idempotency key is required for creating a transaction" ],
+//         required: [ true, "Idempotency Key is required for creating a transaction" ],
 //         index: true,
 //         unique: true
 //     }
@@ -105,6 +83,32 @@ module.exports = transactionModel
 //     timestamps: true
 // })
 
-// const transactionModel = mongoose.model("transaction", transactionSchema);
+// const transactionModel = mongoose.model("transaction", transactionSchema)
 
-// module.exports = transactionModel;
+
+// module.exports = transactionModel   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
